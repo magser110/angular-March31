@@ -1,0 +1,15 @@
+<div class="stop-watch">
+  <p class="time-display"> {{elapsedTime | date:'H:mm:ss': 'UTC'}}</p>
+    <button (click)="startStopWatchHandler()">start</button>
+    <button (click)="stopStopWatchHandler()">stop</button>
+    <ul>
+      @for (l of logs; track l.date){
+        <li>
+          <span>date: {{l.date | date: 'short'}}</span>
+          <span>elapsed time: {{l.elaspedTime}}</span>
+        </li>
+      } @empty {
+        <li>no logs yet</li>
+      }
+    </ul>
+</div>
