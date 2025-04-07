@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { connect } from 'rxjs';
 
 @Component({
@@ -8,7 +8,8 @@ import { connect } from 'rxjs';
   templateUrl: './exercise-stop-wwatch.component.html',
   styleUrl: './exercise-stop-wwatch.component.css'
 })
-export class ExerciseStopWwatchComponent implements OnInit, OnDestroy{
+export class ExerciseStopWwatchComponent implements OnInit{
+  private destroy = inject(DestroyRef);
   elapsedTime = 0;
   isRunning = false;
   timerId: any;
@@ -20,14 +21,14 @@ export class ExerciseStopWwatchComponent implements OnInit, OnDestroy{
 
   }
 
-  ngOnDestroy(): void {
-    if (this.isRunning){
-      clearInterval(this.timerId);
-      this.timerId = null;
-    }
-    console.log('ngOnDestroy called: component destroyed');
+  // ngOnDestroy(): void {
+  //   if (this.isRunning){
+  //     clearInterval(this.timerId);
+  //     this.timerId = null;
+  //   }
+  //   console.log('ngOnDestroy called: component destroyed');
 
-  }
+  // }
 
   startStopWatchHandler(){
     if(!this.isRunning){
@@ -38,7 +39,12 @@ export class ExerciseStopWwatchComponent implements OnInit, OnDestroy{
         this.elapsedTime += 1000;
 
       }, 1000)
+
     }
+    this.destroy.onDestroy(() =>{
+      console.log('destroyref called: component destroyed timer cleared');
+      clearInterval(this.timerId);
+    })
   }
 
   stopStopWatchHandler(){

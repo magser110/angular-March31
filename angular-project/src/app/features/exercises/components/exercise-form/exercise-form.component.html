@@ -1,19 +1,35 @@
-<p>exercise-form works!</p>
-<form (ngSubmit)="addExerciseHandler()">
+<form
+  #form
+  (ngSubmit)="addExerciseHandler(nameInput.value, +durationInput.value)"
+>
   <div class="form-group">
-    <input name="name" type="text" [(ngModel)]="name"
-    placeholder="exercise name"
-    required>
+    <input
+      name="name"
+      type="text"
+      #nameInput
+      placeholder="exercise name"
+      required
+    />
   </div>
-    <div class="form-group">
-    <input name="duration" type="number" [(ngModel)]="duration"
-    placeholder="duration time"
-    required>
-    <p>{{duration}}</p>
-
+  <div class="form-group">
+    <input
+      name="duration"
+      type="number"
+      #durationInput
+      placeholder="duration time"
+      required
+    />
   </div>
 
-  <button class="button-primary" type="submit" [disabled]="!name || duration <= 0">add exercise</button>
+  <button
+    class="button-primary"
+    type="submit"
 
-  <button class="button-clear" type="button" (click)="resetFormHandler()">reset</button>
+  >
+    add exercise
+  </button>
+
+  <button class="button-clear" type="button" (click)="resetFormHandler()">
+    reset
+  </button>
 </form>
