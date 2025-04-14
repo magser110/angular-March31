@@ -1,0 +1,7 @@
+<p>navbar works!</p>
+@if (isAuth){
+  <a routerLink="/dashboard">dashboard</a>
+  <button (click)="logoutHandler()">logout</button>
+} @else {
+  <a routerLink="/login">login</a>
+}
