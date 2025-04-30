@@ -1,19 +1,29 @@
 import { DatePipe } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, NgZone, OnInit } from '@angular/core';
 import { connect } from 'rxjs';
 
 @Component({
   selector: 'app-exercise-stop-wwatch',
   imports: [DatePipe],
   templateUrl: './exercise-stop-wwatch.component.html',
-  styleUrl: './exercise-stop-wwatch.component.css'
+  styleUrl: './exercise-stop-wwatch.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExerciseStopWwatchComponent implements OnInit{
   private destroy = inject(DestroyRef);
+  private cdr = inject(ChangeDetectorRef);
+  private ngZone = inject(NgZone);
+
   elapsedTime = 0;
   isRunning = false;
   timerId: any;
   logs: {date: Date; elaspedTime: number}[]= [];
+
+  get debugOutput(){
+    console.log('[exerciseStopWatchComponent] generated');
+
+    return  '';
+  }
 
   ngOnInit(): void {
 
@@ -33,14 +43,17 @@ export class ExerciseStopWwatchComponent implements OnInit{
   startStopWatchHandler(){
     if(!this.isRunning){
       this.isRunning = true;
-
-      this.timerId = setInterval(() => {
-        console.log("elapsed time: ", this.elapsedTime / 1000);
-        this.elapsedTime += 1000;
-
-      }, 1000)
-
+      this.ngZone.runOutsideAngular(() => {
+        this.timerId = setInterval(() => {
+          console.log("elapsed time: ", this.elapsedTime / 1000);
+          this.elapsedTime += 1000;
+          this.ngZone.run(() =>{
+            this.cdr.markForCheck();
+          })
+        }, 1000);
+      })
     }
+
     this.destroy.onDestroy(() =>{
       console.log('destroyref called: component destroyed timer cleared');
       clearInterval(this.timerId);

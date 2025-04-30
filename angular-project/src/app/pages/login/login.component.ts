@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../shared/services/auth.service';
 import { Router } from '@angular/router';
@@ -9,12 +9,23 @@ import { Router } from '@angular/router';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit{
   private authService = inject(AuthService);
   private router = inject(Router);
+  private cdr = inject(ChangeDetectorRef);
   isAuth = false;
   userName = '';
   password = '';
+
+  ngAfterViewInit(): void {
+    this.cdr.detach();
+  }
+
+  get debugOutput(){
+    console.log('[loginComponent] generated');
+
+    return  '';
+  }
 
   login(){
     this.authService.logIn(this.userName, this.password).subscribe((authStatus) => {
@@ -26,7 +37,8 @@ export class LoginComponent {
       } else{
         alert("invalid username or password")
       }
-    })
+    });
+    this.cdr.detectChanges();
 
   }
 }
